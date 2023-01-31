@@ -1,48 +1,65 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import axios from 'axios'
+import React, { useContext, useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Menu from '../components/Menu'
 import Dlt from "../img/Dlt.png"
 import Edit from "../img/Edit.png"
+import moment from "moment"
+import { AuthContext } from "../context/authContext"
 
 const Single = () => {
+
+  const [post, setPost] = useState({})
+
+  const location = useLocation()
+  const postId = location.pathname.split("/")[2]
+
+  const navigate = useNavigate()
+
+  const { currentUser } = useContext(AuthContext)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`/posts/${postId}`)
+        setPost(res.data)
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData()
+  }, [postId])
+
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`/posts/${postId}`)
+      navigate("/")
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className='single'>
       <div className='content'>
-        <img src='https://images.pexels.com/photos/7008010/pexels-photo-7008010.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' alt='pic' />
+        <img src={post && post.img} alt='pic' />
         <div className='user'>
-          <img src='https://images.pexels.com/photos/3781545/pexels-photo-3781545.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' alt='dp' />
+          {post.userImg && <img src={post.userImg} alt='dp' />}
           <div className='info'>
-            <span>Johanna</span>
-            <p>Posted 2 days ago</p>
+            <span>{post.username}</span>
+            <p>Posted {moment(post.date).fromNow()}</p>
           </div>
-          <div className='edit'>
+          {currentUser.username === post.username && <div className='edit'>
             <Link to={`/write?edit=2`}>
               <img src={Edit} alt='edit' />
             </Link>
-            <img src={Dlt} alt='edit' />
-          </div>
+            <img onClick={handleDelete} src={Dlt} alt='edit' />
+          </div>}
         </div>
-        <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit</h1>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit Lorem ipsum dolor sit amet consectetur adipisicing elit ipsum dolor sit amet consectetur adipisicing elit
-          ipsum dolor sit amet consectetur adipisicing elit ipsum dolor sit amet consectetur adipisicing elit
-          <br />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit Lorem ipsum dolor sit amet consectetur adipisicing elit  <br />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit Lorem ipsum dolor sit amet consectetur adipisicing elit ipsum dolor sit amet consectetur adipisicing elit
-          ipsum dolor sit amet consectetur adipisicing elit ipsum dolor sit amet consectetur adipisicing elit
-          <br />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit Lorem ipsum dolor sit amet consectetur adipisicing elit  <br />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit Lorem ipsum dolor sit amet consectetur adipisicing elit ipsum dolor sit amet consectetur adipisicing elit
-          ipsum dolor sit amet consectetur adipisicing elit ipsum dolor sit amet consectetur adipisicing elit
-          <br />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit Lorem ipsum dolor sit amet consectetur adipisicing elit  <br />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit Lorem ipsum dolor sit amet consectetur adipisicing elit ipsum dolor sit amet consectetur adipisicing elit
-          ipsum dolor sit amet consectetur adipisicing elit ipsum dolor sit amet consectetur adipisicing elit
-          <br />
-          Lorem ipsum dolor sit amet consectetur adipisicing elit Lorem ipsum dolor sit amet consectetur adipisicing elit  <br />
-        </p>
+        <h1>{post.title}</h1>
+        {post.desc}
       </div>
-      <Menu />
+      <Menu cat = {post.cat}/>
     </div>
   )
 }
