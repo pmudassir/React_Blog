@@ -23,14 +23,12 @@ const Write = () => {
       formData.append("file", file)
       const res = await axios.post("/upload", formData)
       return res.data
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   const handleClick = async (e) => {
     e.preventDefault()
-    const imgUrl = await upload()
+    const imgUrl = await upload();
 
     try {
       state ? await axios.put(`/posts/${state.id}`, {
@@ -55,7 +53,7 @@ const Write = () => {
   return (
     <div className='add'>
       <div className='content'>
-        <input placeholder='Title' value={title} type="text" onChange={e => setTitle(e.target.value)} />
+        <input placeholder='Title' value={title} type="text" onChange={(e) => setTitle(e.target.value)} />
         <div className='editorContainer'>
           <ReactQuill className='editor' theme="snow" value={value} onChange={setValue} />
         </div>
@@ -69,8 +67,13 @@ const Write = () => {
           <span>
             <b>Visibility </b> Public
           </span>
-          <input type="file" id="file" style={{ display: "none" }} />
-          <label className='file' htmlFor="file" onChange={(e) => setFile(e.target.files[0])}>Upload Image</label>
+          <input
+            style={{ display: "none" }}
+            type="file"
+            id="file"
+            name=""
+            onChange={(e) => setFile(e.target.files[0])} />
+          <label className="file" htmlFor="file" >Upload Image</label>
           <div className='buttons'>
             <button>Save as Draft</button>
             <button onClick={handleClick}>Publish</button>

@@ -29,14 +29,16 @@ const Login = () => {
   }
   return (
     <div className='auth'>
-      <h1>Login</h1>
-      <form>
-        <input required type="text" placeholder="username" name='username' onChange={handleChange} />
-        <input required type="password" placeholder="password" name='password' onChange={handleChange} />
-        <button onClick={handleSubmit}>Login</button>
-        {error && <p>{error}</p>}
-        <span>Create an Account <Link to="/register">Register</Link></span>
-      </form>
+      <div className='bgcolor'>
+        <h1>Login</h1>
+        <form>
+          <input required type="text" placeholder="username" name='username' onChange={handleChange} />
+          <input required type="password" placeholder="password" name='password' onChange={handleChange} />
+          <button onClick={handleSubmit}>Login</button>
+          {error && <p>{error}</p>}
+          <span>Create an Account <Link to="/register">Register</Link></span>
+        </form>
+      </div>
     </div>
   )
 }
