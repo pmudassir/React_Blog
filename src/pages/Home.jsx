@@ -10,9 +10,12 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`/posts${cat}`)
-        setPosts(res.data)
+        const res = await axios.get(`/posts${cat}`);
+        if(res && Array.isArray(res.data) && res.data.length !=0 )setPosts(res.data);
+        else setPosts([]);
+        
       } catch (error) {
+        setPosts([]);
         console.log(error);
       }
     }
@@ -27,7 +30,7 @@ const Home = () => {
   return (
     <div className='home'>
       <div className='posts'>
-        {posts && posts.map((post) => (
+        {posts && posts.length !== 0 && posts.map((post) => (
           <div className='post' key={post.id}>
             <div className='img'>
               <img src={`../upload/${post?.img}`} alt="blog img" />
